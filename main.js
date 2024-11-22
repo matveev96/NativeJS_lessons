@@ -1,13 +1,14 @@
+// Первый урок native js, Иммутабельность
+
 const arr = [1, 2, 3, 4]
 // arr.push(5)
 // console.log(arr)
-//
+// Добавляем иммутабельно данные в массив при помощи spread
 const newArr = [...arr, 123]
-// newArr.map(num => num === 2 ? [...arr, 44] : num)
 newArr[1] = 33
-console.log(newArr)
+// console.log(newArr)
 //
-// const newArr2 = arr.filter((num) => num != 1)
+const newArr2 = arr.filter((num) => num != 2)
 // console.log(newArr2)
 //
 // console.log(arr === newArr)
@@ -44,14 +45,19 @@ const nextUser = {
 //Двумя способами можно мутабельно изменить в массиве данные. При помощи spread и map
 const usersNew = [
     ...users.slice(0,2),
-    {...users[2], id: 14},
-    ...users.slice(3)
+    {...users[2], id: 14, name: 'Denis'},
+    ...users.slice(3),
+    nextUser
 ];
 // const usersNew = users.map(user => user.id === 3 ? {...user, id: 45} : user);
+// console.log(usersNew)
+
+const usersNew2 = usersNew.filter(user => user.id !== 1)
 
 
-console.log(usersNew)
-console.log(users === usersNew)
+// console.log(usersNew2)
+
+// console.log(users === usersNew)
 
 
 const superUser = {
@@ -92,4 +98,131 @@ const newSuperUser = {
 }
 
 
-console.log(newSuperUser)
+// console.log(newSuperUser)
+
+//--------------------------------------------------------------------
+// Третий урок native js. Методы slice, splice, toSpliced, reduce
+
+//slice => itSlice делаем как метод массива через this
+const numsLiteral = [1,2,3,4,5,6,7,8]
+const numsFunc = new Array(1,2,3,4,5,6,7,8,9)
+
+function itSlice( startIndex = 0, endIndex = this.length) {
+    const result = [];
+    for(let i = startIndex; i < endIndex; i++) {
+        result.push(this[i]);
+    }
+    return result
+}
+
+Array.prototype.itSlice = itSlice //Array.prototype - это родитель всех массивов, т.е. Array - отец (функция, обьект), у которого есть прототипы, все методы массивов. т.е. используя 10 массивов используется один родитель,чтобы взять у него методы
+
+console.log(numsFunc.itSlice(2))
+
+//filter => itFilter делаем как метод массива через this
+
+Array.prototype.itFilter = function (checkFunc) {
+    const result = []
+    for (let i = 0; i < this.length; i++) {
+        if(checkFunc(this[i])) {
+            result.push(this[i]);
+        }
+    }
+    return result
+}
+
+const checkFuncInFilter = (n) => {
+    return n % 2 === 0
+}
+
+const even = numsFunc.itFilter(checkFuncInFilter)
+
+console.log(even)
+
+//map => itMap
+
+function itMap(array, mapFunction) {
+    const result = []
+    for (let i = 0; i < array.length; i++) {
+        const newEl = mapFunction(array[i])
+        result.push(newEl);
+    }
+    return result
+}
+
+console.log(itMap(numsFunc, n => n/2))
+
+//reduce => itReduce
+
+function itReduce(array, reducer, startVal) {
+    let start = startVal
+    for (let i = 0; i < array.length; i++) {
+        start = reducer(start, array[i]);
+    }
+    return start
+}
+
+console.log(itReduce(numsFunc, (acc, el) => acc + el, 0))
+
+console.log(numsFunc.reduce((acc, el) => acc += el, 0))
+
+
+
+// Задача: необходимо взять из массива данные и сделать из них обьект, где ключ - число, а значение, количество этих чисел
+const arr2 = [1,3,4,45,56,7,65,65,4,34,5,2,1]
+
+const obj = {
+    '1': 3,
+    '2': 5,
+    '3': 6
+}
+//первый вариант
+function arrToObj(array) {
+    let result = {}
+    for (let i = 0; i < array.length; i++) {
+        if(result[array[i]]) {
+            result[array[i]]++
+        } else {
+            result[array[i]] = 1
+        }
+    }
+    return result
+}
+console.log(arrToObj(arr2))
+
+//второй вариант
+function arrToObjO(array) {
+    let result = {}
+    for (let i = 0; i < array.length; i++) {
+        const num = array[i]
+        result[num] = (result[num] || 0) + 1
+    }
+    return result
+}
+console.log(arrToObjO(arr2))
+
+//третий вариант с reduce
+console.log(arr2.reduce((acc,el) => {
+    acc[el] = (acc[el] || 0) + 1
+    return acc
+}, {}))
+
+
+//полифил метода splice
+
+function itSplice(array, startIndex, deletCount, ...newElements) {
+    const result = []
+    const endIndex = startIndex + deletCount
+    for (let i = startIndex; i < endIndex; i++) {
+        result.push(array[i])
+        array[i] = array[i + deletCount]
+    }
+    array.length = array.length - deletCount
+    if(newElements.length){
+        for (let j = 0; j < newElements.length; j++) {
+            array[array.length] = array[startIndex + j]
+            array[startIndex + j] = newElements[j]
+        }
+    }
+    return result
+}
