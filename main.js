@@ -44,7 +44,7 @@ const nextUser = {
 }
 //Двумя способами можно мутабельно изменить в массиве данные. При помощи spread и map
 const usersNew = [
-    ...users.slice(0,2),
+    ...users.slice(0, 2),
     {...users[2], id: 14, name: 'Denis'},
     ...users.slice(3),
     nextUser
@@ -104,12 +104,12 @@ const newSuperUser = {
 // Третий урок native js. Методы slice, splice, toSpliced, reduce
 
 //slice => itSlice делаем как метод массива через this
-const numsLiteral = [1,2,3,4,5,6,7,8]
-const numsFunc = new Array(1,2,3,4,5,6,7,8,9)
+const numsLiteral = [1, 2, 3, 4, 5, 6, 7, 8]
+const numsFunc = new Array(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
-function itSlice( startIndex = 0, endIndex = this.length) {
+function itSlice(startIndex = 0, endIndex = this.length) {
     const result = [];
-    for(let i = startIndex; i < endIndex; i++) {
+    for (let i = startIndex; i < endIndex; i++) {
         result.push(this[i]);
     }
     return result
@@ -124,7 +124,7 @@ console.log(numsFunc.itSlice(2))
 Array.prototype.itFilter = function (checkFunc) {
     const result = []
     for (let i = 0; i < this.length; i++) {
-        if(checkFunc(this[i])) {
+        if (checkFunc(this[i])) {
             result.push(this[i]);
         }
     }
@@ -150,7 +150,7 @@ function itMap(array, mapFunction) {
     return result
 }
 
-console.log(itMap(numsFunc, n => n/2))
+console.log(itMap(numsFunc, n => n / 2))
 
 //reduce => itReduce
 
@@ -167,20 +167,20 @@ console.log(itReduce(numsFunc, (acc, el) => acc + el, 0))
 console.log(numsFunc.reduce((acc, el) => acc += el, 0))
 
 
-
 // Задача: необходимо взять из массива данные и сделать из них обьект, где ключ - число, а значение, количество этих чисел
-const arr2 = [1,3,4,45,56,7,65,65,4,34,5,2,1]
+const arr2 = [1, 3, 4, 45, 56, 7, 65, 65, 4, 34, 5, 2, 1]
 
 const obj = {
     '1': 3,
     '2': 5,
     '3': 6
 }
+
 //первый вариант
 function arrToObj(array) {
     let result = {}
     for (let i = 0; i < array.length; i++) {
-        if(result[array[i]]) {
+        if (result[array[i]]) {
             result[array[i]]++
         } else {
             result[array[i]] = 1
@@ -188,6 +188,7 @@ function arrToObj(array) {
     }
     return result
 }
+
 console.log(arrToObj(arr2))
 
 //второй вариант
@@ -199,10 +200,11 @@ function arrToObjO(array) {
     }
     return result
 }
+
 console.log(arrToObjO(arr2))
 
 //третий вариант с reduce
-console.log(arr2.reduce((acc,el) => {
+console.log(arr2.reduce((acc, el) => {
     acc[el] = (acc[el] || 0) + 1
     return acc
 }, {}))
@@ -218,7 +220,7 @@ function itSplice(array, startIndex, deletCount, ...newElements) {
         array[i] = array[i + deletCount]
     }
     array.length = array.length - deletCount
-    if(newElements.length){
+    if (newElements.length) {
         for (let j = 0; j < newElements.length; j++) {
             array[array.length] = array[startIndex + j]
             array[startIndex + j] = newElements[j]
@@ -226,3 +228,81 @@ function itSplice(array, startIndex, deletCount, ...newElements) {
     }
     return result
 }
+
+//Sprint 1 week 4
+
+const todolistId_1 = crypto.randomUUID()
+const todolistId_2 = crypto.randomUUID()
+
+
+const todolist = [
+    {
+        id: todolistId_1,
+        title: "what to learn",
+        filter: "all",
+    },
+    {
+        id: todolistId_2,
+        title: "what to buy",
+        filter: "all",
+    },
+
+]
+
+
+const tasks = {
+    [todolistId_1]: [
+        {id: 12, title: "HTML"},
+        {id: 13, title: "CSS"},
+        {id: 14, title: "REACT"},
+    ],
+    [todolistId_2]: [
+        {id: 22, title: "HTML"},
+        {id: 23, title: "CSS"},
+        {id: 24, title: "REACT"},
+    ]
+}
+
+function createObject(key, value) {
+    return {
+        [key]: value,
+    }
+}
+
+createObject('car', 'Audi')
+// получаем объект { car: 'Audi' }
+
+let prefix = 'user_'
+
+let user = {
+    [prefix + 'id']: 123,
+    [prefix + 'name']: 'Alice',
+}
+
+console.log(user) // { user_id: 123, user_name: 'Alice' }
+
+for (const key in todolist[0]) {
+    console.log(todolist[0][key])
+}
+
+// 1. Создал переменную для каждого статуса
+const STATUS_BUSY = 'busy'
+const STATUS_READY = 'ready'
+// 2. Использовала вычисляемые свойства
+const STATUS_LABELS = {
+    [STATUS_BUSY]: 'Ожидает',
+    [STATUS_READY]: 'Готов',
+}
+// 3. Получил массив из БД
+const drivers = [
+    { name: 'Павел', status: 'busy' },
+    { name: 'Сергей', status: 'ready' },
+]
+// 4. Перевел статусы в нужный (человеческий) формат
+const driverStatuses = drivers.map(driver => {
+    const { status } = driver
+    return STATUS_LABELS[status]
+})
+console.log(driverStatuses)
+// Array [ "Ожидает", "Готов" ]
+
